@@ -86,6 +86,10 @@ mpa/
 └── README.md       # This file
 ```
 
+### Security Note
+
+This application is designed for **local personal use only**. The Express server does not include rate limiting or other production-grade security features. Do not expose this server to the public internet. Run it only on localhost for personal use.
+
 ### Browser Compatibility
 
 - Modern browsers with ES6 support
