@@ -345,7 +345,6 @@ class MPA {
         return response
             .replace(/\[SET_REMINDER:[^\]]+\]/g, '')
             .replace(/\[WHATSAPP_LINK:[^\]]+\]/g, '')
-            .replace(/\[USER_AUTH_REQUIRED\]/g, '')
             .trim();
     }
 }

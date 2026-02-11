@@ -79,8 +79,8 @@ if (isUnauthorized) {
 
 // Test 9: User Recognition - No Current User (allows setup)
 console.log('9️⃣ Testing User Recognition - No Current User:');
-const mpa2 = new MPA();
-const setupResponse = mpa2.processMessage('Tell me a joke', null);
+const unregisteredMpa = new MPA();
+const setupResponse = unregisteredMpa.processMessage('Tell me a joke', null);
 console.log('Response without user:', setupResponse);
 const allowsSetup = !setupResponse.includes('Sorry, I am only available');
 console.log('Allows setup:', allowsSetup);

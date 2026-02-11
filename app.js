@@ -214,24 +214,44 @@ function showUserSetup() {
     
     function registerUser() {
         const userName = userNameInput.value.trim();
-        if (userName) {
-            currentUser = userName;
-            mpa.setRegisteredUser(userName);
-            localStorage.setItem('mpa_registered_user', userName);
-            
-            // Remove setup overlay
-            setupOverlay.remove();
-            
-            // Show welcome message
-            const welcomeMsg = `Welcome, ${userName}! I'm MPA, your personal assistant. How may I be of service?`;
-            const welcomeDiv = document.querySelector('.welcome-message p');
-            if (welcomeDiv) {
-                welcomeDiv.textContent = welcomeMsg;
-            }
-            
-            // Focus input
-            userInput.focus();
+        
+        // Validate username
+        if (!userName) {
+            return;
         }
+        
+        if (userName.length < 2) {
+            alert('Name must be at least 2 characters long.');
+            return;
+        }
+        
+        if (userName.length > 50) {
+            alert('Name must be 50 characters or less.');
+            return;
+        }
+        
+        // Basic sanitization - allow only letters, spaces, hyphens, and apostrophes
+        if (!/^[a-zA-Z\s'-]+$/.test(userName)) {
+            alert('Name can only contain letters, spaces, hyphens, and apostrophes.');
+            return;
+        }
+        
+        currentUser = userName;
+        mpa.setRegisteredUser(userName);
+        localStorage.setItem('mpa_registered_user', userName);
+        
+        // Remove setup overlay
+        setupOverlay.remove();
+        
+        // Show welcome message
+        const welcomeMsg = `Welcome, ${userName}! I'm MPA, your personal assistant. How may I be of service?`;
+        const welcomeDiv = document.querySelector('.welcome-message p');
+        if (welcomeDiv) {
+            welcomeDiv.textContent = welcomeMsg;
+        }
+        
+        // Focus input
+        userInput.focus();
     }
     
     registerBtn.addEventListener('click', registerUser);
