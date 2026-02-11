@@ -126,8 +126,7 @@ function setReminder(datetime, task) {
 function showNotification(task) {
     if ('Notification' in window && Notification.permission === 'granted') {
         new Notification('MPA Reminder', {
-            body: task,
-            icon: '🎩'
+            body: task
         });
     } else {
         // Fallback to alert

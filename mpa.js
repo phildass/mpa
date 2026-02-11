@@ -197,6 +197,11 @@ class MPA {
             }
 
             targetDate.setHours(hour, minute, 0, 0);
+            
+            // If the time has already passed today and not explicitly tomorrow, schedule for tomorrow
+            if (!timeStr.toLowerCase().includes('tomorrow') && targetDate < now) {
+                targetDate.setDate(targetDate.getDate() + 1);
+            }
         }
 
         return targetDate.toISOString();
@@ -262,10 +267,13 @@ class MPA {
         const reminderPattern = /\[SET_REMINDER:\s*([^\]]+)\]/g;
         let match;
         while ((match = reminderPattern.exec(response)) !== null) {
+            const datetime = match[1].trim();
+            const date = new Date(datetime);
+            const dateText = isNaN(date.getTime()) ? 'the specified time' : date.toLocaleString();
             actions.push({
                 type: 'SET_REMINDER',
-                datetime: match[1].trim(),
-                text: `Reminder set for ${new Date(match[1]).toLocaleString()}`
+                datetime: datetime,
+                text: `Reminder set for ${dateText}`
             });
         }
 
