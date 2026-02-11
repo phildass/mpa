@@ -266,9 +266,11 @@ PORT=3002 pm2 start server.js --name "mpa-app-3"
 
 ## Security Checklist
 
+⚠️ **IMPORTANT**: This is a demonstration implementation. See `SECURITY.md` for critical security considerations before production deployment.
+
 - [ ] HTTPS enabled with valid SSL certificate
 - [ ] Environment variables for sensitive data
-- [ ] Rate limiting implemented
+- [ ] Rate limiting implemented (install express-rate-limit)
 - [ ] CORS configured properly
 - [ ] Input validation on all forms
 - [ ] SQL injection prevention
@@ -277,6 +279,12 @@ PORT=3002 pm2 start server.js --name "mpa-app-3"
 - [ ] Regular security updates
 - [ ] Firewall rules configured
 - [ ] Server hardening completed
+- [ ] Server-side authentication implemented
+- [ ] Server-side payment verification
+- [ ] Database for user/payment storage
+- [ ] Security audit completed
+
+**Note**: The current implementation uses client-side storage and validation for demonstration purposes. Production deployment requires server-side implementation. See `SECURITY.md` for details.
 
 ## Troubleshooting
 
