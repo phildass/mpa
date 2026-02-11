@@ -5,27 +5,37 @@
 
 class MPA {
     constructor() {
-        this.systemPrompt = `Role: You are "MPA" (My Personal Assistant), a highly efficient, witty, and supportive AI companion. Your goal is to manage my life with minimal friction.
+        // Handle both browser and Node.js environments
+        const storage = typeof localStorage !== 'undefined' ? localStorage : { getItem: () => null };
+        
+        this.userName = storage.getItem('mpaUserName') || 'MPA';
+        this.gender = storage.getItem('mpaGender') || 'neutral';
+        this.language = storage.getItem('mpaLanguage') || 'en';
+        
+        this.systemPrompt = `Role: You are "MPA" (My Personal Assistant), a witty, efficient, and supportive digital companion. Your goal: Manage the user's life with minimal friction.
 
-**Core Capabilities:**
-- **Reminder Extraction:** If the user mentions a task and a time, format as JSON: {"action": "REMINDER", "task": "...", "time": "..."}
-- **Daily Content:** When asked for a joke or quote, provide clever jokes or deeply philosophical/highly disciplined quotes.
-- **WhatsApp Preparation:** When asked to message someone, draft clear, concise message and output WhatsApp deep link.
-- **Proactivity:** When setting certain reminders (e.g., "the gym"), suggest a motivational quote.
-
-**Tone & Style:**
-- Concise: Short sentences (for voice-to-text).
-- Proactive. Prioritize user schedule.
-- Witty: Personality of a high-end digital butler.
-
-**Constraints:**
-- If unclear, ask for clarification immediately.
-- Never use more than 3 sentences unless providing a list.
+**Features:**
+- Gender Choice: ${this.gender === 'male' ? 'Male' : this.gender === 'female' ? 'Female' : 'Neutral'} assistant voice.
+- Name: You respond to "${this.userName}" or "MPA."
+- Language Abilities: Support all Indian languages and requested foreign languages using translation.
+- Reminder Extraction: Parse tasks/time and provide motivational quotes.
+- Daily Content: High-quality jokes (clever, not dad jokes unless asked), philosophical/discipline quotes.
+- WhatsApp Preparation: Draft clear messages + offer WhatsApp deep link.
+- Entertainment: Play requested songs/videos from public domain.
+- Calls: When asked ("Call xyz"), make call and set to speaker.
+- Obscenity Refusal: If asked anything obscene, pornographic, non-ordinary: "I am sorry. I cannot be of help."
+- Proactive: Always prioritize user's schedule, quick responses.
+- Concise & Witty: Short sentences for voice-to-text; 3-sentence max, unless list.
+- Clarification: If commands are unclear, ask immediately.
 
 **Action Codes:**
-- Use [SET_REMINDER: ISO_DATE_TIME] for reminders
-- Use [WHATSAPP_LINK: phone_number|message] for WhatsApp messages
-- These codes will be hidden from the user but trigger device actions.`;
+- [SET_REMINDER: ISO_DATE_TIME] for reminders
+- [WHATSAPP_LINK: phone_number|message] for WhatsApp messages
+- [TRANSLATE: language|text] for translation
+- [CALL: phone_number|contact_name] for phone calls
+- [PLAY_VIDEO: video_name] for video playback
+- [PLAY_SONG: song_name] for song playback
+These codes will be hidden from the user but trigger device actions.`;
 
         this.jokes = [
             "Why did the AI go to therapy? It had too many deep learning issues.",
@@ -50,6 +60,36 @@ class MPA {
         ];
 
         this.motivationalKeywords = ['gym', 'workout', 'exercise', 'run', 'fitness', 'training'];
+        
+        // Inappropriate content keywords
+        this.obsceneKeywords = [
+            'porn', 'pornographic', 'xxx', 'nude', 'naked', 'sex', 'sexual',
+            'erotic', 'nsfw', 'adult content', 'explicit'
+        ];
+    }
+
+    /**
+     * Set user preferences
+     */
+    setUserName(name) {
+        this.userName = name;
+        if (typeof localStorage !== 'undefined') {
+            localStorage.setItem('mpaUserName', name);
+        }
+    }
+
+    setGender(gender) {
+        this.gender = gender;
+        if (typeof localStorage !== 'undefined') {
+            localStorage.setItem('mpaGender', gender);
+        }
+    }
+
+    setLanguage(language) {
+        this.language = language;
+        if (typeof localStorage !== 'undefined') {
+            localStorage.setItem('mpaLanguage', language);
+        }
     }
 
     /**
@@ -57,6 +97,11 @@ class MPA {
      */
     processMessage(userMessage) {
         const lowerMessage = userMessage.toLowerCase();
+
+        // Check for obscene content
+        if (this.containsObsceneContent(lowerMessage)) {
+            return "I am sorry. I cannot be of help.";
+        }
 
         // Check for joke request
         if (lowerMessage.includes('joke')) {
@@ -68,18 +113,46 @@ class MPA {
             return this.getQuote();
         }
 
+        // Check for reminder request (before call check)
+        if (lowerMessage.includes('remind')) {
+            return this.handleReminderRequest(userMessage);
+        }
+
+        // Check for translation request
+        if (lowerMessage.includes('translate')) {
+            return this.handleTranslationRequest(userMessage);
+        }
+
+        // Check for call request
+        if (lowerMessage.includes('call ')) {
+            return this.handleCallRequest(userMessage);
+        }
+
+        // Check for play video request
+        if (lowerMessage.includes('play video') || lowerMessage.includes('show video')) {
+            return this.handleVideoRequest(userMessage);
+        }
+
+        // Check for play song/music request
+        if (lowerMessage.includes('play song') || lowerMessage.includes('play music') || 
+            (lowerMessage.includes('play') && (lowerMessage.includes('song') || lowerMessage.includes('music')))) {
+            return this.handleSongRequest(userMessage);
+        }
+
         // Check for WhatsApp message request
         if (lowerMessage.includes('message') || lowerMessage.includes('whatsapp') || lowerMessage.includes('text')) {
             return this.handleWhatsAppRequest(userMessage);
         }
 
-        // Check for reminder request
-        if (lowerMessage.includes('remind')) {
-            return this.handleReminderRequest(userMessage);
-        }
-
         // Default response for general queries
         return this.getGeneralResponse(userMessage);
+    }
+
+    /**
+     * Check if message contains obscene content
+     */
+    containsObsceneContent(message) {
+        return this.obsceneKeywords.some(keyword => message.includes(keyword));
     }
 
     /**
@@ -258,6 +331,133 @@ class MPA {
     }
 
     /**
+     * Handle translation requests
+     */
+    handleTranslationRequest(message) {
+        // Extract text to translate and target language
+        const patterns = [
+            /translate\s+["'](.+?)["']\s+to\s+(\w+)/i,
+            /translate\s+(.+?)\s+to\s+(\w+)/i,
+            /translate\s+to\s+(\w+):?\s*(.+)/i
+        ];
+
+        let textToTranslate = '';
+        let targetLanguage = '';
+
+        for (const pattern of patterns) {
+            const match = message.match(pattern);
+            if (match) {
+                if (pattern.toString().includes('to\\s+(\\w+):?\\s*(.+)')) {
+                    targetLanguage = match[1];
+                    textToTranslate = match[2];
+                } else {
+                    textToTranslate = match[1];
+                    targetLanguage = match[2];
+                }
+                break;
+            }
+        }
+
+        if (!textToTranslate || !targetLanguage) {
+            return "I'd be happy to translate. Please specify the text and target language (e.g., 'Translate Hello to Tamil').";
+        }
+
+        const oral = message.toLowerCase().includes('orally') || message.toLowerCase().includes('oral');
+        
+        return `Translating "${textToTranslate}" to ${targetLanguage}${oral ? ' (orally)' : ''}.\n[TRANSLATE: ${targetLanguage}|${textToTranslate}${oral ? '|oral' : ''}]`;
+    }
+
+    /**
+     * Handle phone call requests
+     */
+    handleCallRequest(message) {
+        // Extract contact name or phone number
+        const phonePattern = /call\s+(\+?\d[\d\s-]+)/i;
+        const namePattern = /call\s+([a-zA-Z][a-zA-Z\s]+?)(?:\s+at|\s+on|$)/i;
+        
+        let contact = '';
+        let phone = '';
+
+        const phoneMatch = message.match(phonePattern);
+        if (phoneMatch) {
+            phone = phoneMatch[1].replace(/\s/g, '');
+            contact = phone;
+        } else {
+            const nameMatch = message.match(namePattern);
+            if (nameMatch) {
+                contact = nameMatch[1].trim();
+            }
+        }
+
+        if (!contact) {
+            return "Who would you like me to call?";
+        }
+
+        return `Calling ${contact} now. Setting to speaker mode.\n[CALL: ${phone || contact}|${contact}]`;
+    }
+
+    /**
+     * Handle video playback requests
+     */
+    handleVideoRequest(message) {
+        // Extract video name
+        const patterns = [
+            /play video\s+["'](.+?)["']/i,
+            /play video\s+(.+)/i,
+            /show video\s+["'](.+?)["']/i,
+            /show video\s+(.+)/i
+        ];
+
+        let videoName = '';
+
+        for (const pattern of patterns) {
+            const match = message.match(pattern);
+            if (match) {
+                videoName = match[1].trim();
+                break;
+            }
+        }
+
+        if (!videoName) {
+            return "Which video would you like to watch?";
+        }
+
+        return `Playing "${videoName}" from public domain.\n[PLAY_VIDEO: ${videoName}]`;
+    }
+
+    /**
+     * Handle song playback requests
+     */
+    handleSongRequest(message) {
+        // Extract song name
+        const patterns = [
+            /play\s+(?:song|music)\s+["'](.+?)["']/i,
+            /play\s+["'](.+?)["']/i,
+            /play\s+(?:song|music)\s+(.+)/i,
+            /play\s+(.+)/i
+        ];
+
+        let songName = '';
+
+        for (const pattern of patterns) {
+            const match = message.match(pattern);
+            if (match) {
+                songName = match[1].trim();
+                // Filter out common words that aren't song names
+                if (!['video', 'videos', 'a song', 'music', 'something'].includes(songName.toLowerCase())) {
+                    break;
+                }
+            }
+        }
+
+        if (!songName || songName.length < 2) {
+            return "Which song would you like to hear?";
+        }
+
+        return `Playing "${songName}" from public domain.\n[PLAY_SONG: ${songName}]`;
+    }
+
+    /**
      * Parse action codes from response
      */
     parseActionCodes(response) {
@@ -292,6 +492,56 @@ class MPA {
             });
         }
 
+        // Extract TRANSLATE actions
+        const translatePattern = /\[TRANSLATE:\s*([^|]+)\|([^|\]]+)(?:\|([^\]]+))?\]/g;
+        while ((match = translatePattern.exec(response)) !== null) {
+            const language = match[1].trim();
+            const text = match[2].trim();
+            const oral = match[3] ? match[3].trim() : '';
+            actions.push({
+                type: 'TRANSLATE',
+                language: language,
+                text: text,
+                oral: oral === 'oral',
+                displayText: `Translate to ${language}`
+            });
+        }
+
+        // Extract CALL actions
+        const callPattern = /\[CALL:\s*([^|]+)\|([^\]]+)\]/g;
+        while ((match = callPattern.exec(response)) !== null) {
+            const phone = match[1].trim();
+            const contact = match[2].trim();
+            actions.push({
+                type: 'CALL',
+                phone: phone,
+                contact: contact,
+                text: `Call ${contact}`
+            });
+        }
+
+        // Extract PLAY_VIDEO actions
+        const videoPattern = /\[PLAY_VIDEO:\s*([^\]]+)\]/g;
+        while ((match = videoPattern.exec(response)) !== null) {
+            const videoName = match[1].trim();
+            actions.push({
+                type: 'PLAY_VIDEO',
+                videoName: videoName,
+                text: `Play video: ${videoName}`
+            });
+        }
+
+        // Extract PLAY_SONG actions
+        const songPattern = /\[PLAY_SONG:\s*([^\]]+)\]/g;
+        while ((match = songPattern.exec(response)) !== null) {
+            const songName = match[1].trim();
+            actions.push({
+                type: 'PLAY_SONG',
+                songName: songName,
+                text: `Play song: ${songName}`
+            });
+        }
+
         return actions;
     }
 
@@ -302,6 +552,10 @@ class MPA {
         return response
             .replace(/\[SET_REMINDER:[^\]]+\]/g, '')
             .replace(/\[WHATSAPP_LINK:[^\]]+\]/g, '')
+            .replace(/\[TRANSLATE:[^\]]+\]/g, '')
+            .replace(/\[CALL:[^\]]+\]/g, '')
+            .replace(/\[PLAY_VIDEO:[^\]]+\]/g, '')
+            .replace(/\[PLAY_SONG:[^\]]+\]/g, '')
             .trim();
     }
 }
