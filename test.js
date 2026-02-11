@@ -44,4 +44,51 @@ console.log('Clean Response:', cleanWhatsappResponse);
 console.log('Actions:', JSON.stringify(whatsappActions, null, 2));
 console.log('✅ WhatsApp feature works\n');
 
-console.log('✨ All tests passed! MPA is working correctly.');
+// Test 6: User Recognition - Setup
+console.log('6️⃣ Testing User Recognition - Setup:');
+mpa.setRegisteredUser('Alice');
+const setupCheck = mpa.getRegisteredUser();
+console.log('Registered User:', setupCheck);
+console.log('✅ User registration works\n');
+
+// Test 7: User Recognition - Authorized User
+console.log('7️⃣ Testing User Recognition - Authorized User:');
+const authorizedResponse = mpa.processMessage('Tell me a joke', 'Alice');
+console.log('Response for Alice:', authorizedResponse);
+const isAuthorized = !authorizedResponse.includes('Sorry, I am only available');
+console.log('Is authorized:', isAuthorized);
+if (isAuthorized) {
+    console.log('✅ Authorized user can access MPA\n');
+} else {
+    console.log('❌ Authorized user should be able to access MPA\n');
+    process.exit(1);
+}
+
+// Test 8: User Recognition - Unauthorized User
+console.log('8️⃣ Testing User Recognition - Unauthorized User:');
+const unauthorizedResponse = mpa.processMessage('Tell me a joke', 'Bob');
+console.log('Response for Bob:', unauthorizedResponse);
+const isUnauthorized = unauthorizedResponse.includes('Sorry, I am only available for Alice');
+console.log('Is unauthorized:', isUnauthorized);
+if (isUnauthorized) {
+    console.log('✅ Unauthorized user is blocked correctly\n');
+} else {
+    console.log('❌ Unauthorized user should be blocked\n');
+    process.exit(1);
+}
+
+// Test 9: User Recognition - No Current User (allows setup)
+console.log('9️⃣ Testing User Recognition - No Current User:');
+const unregisteredMpa = new MPA();
+const setupResponse = unregisteredMpa.processMessage('Tell me a joke', null);
+console.log('Response without user:', setupResponse);
+const allowsSetup = !setupResponse.includes('Sorry, I am only available');
+console.log('Allows setup:', allowsSetup);
+if (allowsSetup) {
+    console.log('✅ MPA allows interaction during setup\n');
+} else {
+    console.log('❌ MPA should allow interaction during setup\n');
+    process.exit(1);
+}
+
+console.log('✨ All tests passed! MPA is working correctly with User Recognition.');

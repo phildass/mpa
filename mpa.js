@@ -7,6 +7,10 @@ class MPA {
     constructor() {
         this.systemPrompt = `Role: You are "MPA" (My Personal Assistant), a highly efficient, witty, and supportive AI companion. Your goal is to manage my life with minimal friction.
 
+**User Recognition:**
+- You respond only to the recognized/registered user.
+- If addressed by anyone else, decline politely with: "Sorry, I am only available for [User Name]."
+
 **Core Capabilities:**
 - **Reminder Extraction:** If the user mentions a task and a time, format as JSON: {"action": "REMINDER", "task": "...", "time": "..."}
 - **Daily Content:** When asked for a joke or quote, provide clever jokes or deeply philosophical/highly disciplined quotes.
@@ -27,6 +31,7 @@ class MPA {
 - Use [WHATSAPP_LINK: phone_number|message] for WhatsApp messages
 - These codes will be hidden from the user but trigger device actions.`;
 
+        this.registeredUser = null; // Will be set during user setup
         this.jokes = [
             "Why did the AI go to therapy? It had too many deep learning issues.",
             "I'd tell you a UDP joke, but you might not get it.",
@@ -53,9 +58,47 @@ class MPA {
     }
 
     /**
+     * Set the registered user
+     */
+    setRegisteredUser(username) {
+        this.registeredUser = username;
+    }
+
+    /**
+     * Get the registered user
+     */
+    getRegisteredUser() {
+        return this.registeredUser;
+    }
+
+    /**
+     * Check if a user is authorized
+     */
+    isUserAuthorized(currentUser) {
+        // If no user is registered yet, allow setup
+        if (!this.registeredUser) {
+            return true;
+        }
+        // Check if current user matches registered user
+        return currentUser === this.registeredUser;
+    }
+
+    /**
+     * Get unauthorized user response
+     */
+    getUnauthorizedResponse() {
+        const userName = this.registeredUser || 'my registered user';
+        return `Sorry, I am only available for ${userName}.`;
+    }
+
+    /**
      * Process user message and generate response
      */
-    processMessage(userMessage) {
+    processMessage(userMessage, currentUser = null) {
+        // Check user authorization
+        if (!this.isUserAuthorized(currentUser)) {
+            return this.getUnauthorizedResponse();
+        }
         const lowerMessage = userMessage.toLowerCase();
 
         // Check for joke request
