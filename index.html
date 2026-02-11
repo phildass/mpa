@@ -7,15 +7,72 @@
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
+    <!-- Settings Modal -->
+    <div id="settingsModal" class="modal">
+        <div class="modal-content">
+            <h2>⚙️ MPA Settings</h2>
+            
+            <div class="settings-group">
+                <label for="userName">Assistant Name:</label>
+                <input type="text" id="userName" placeholder="e.g., Nina, Alex, MPA" />
+            </div>
+            
+            <div class="settings-group">
+                <label>Assistant Gender:</label>
+                <div class="gender-options">
+                    <label>
+                        <input type="radio" name="gender" value="male" />
+                        Male
+                    </label>
+                    <label>
+                        <input type="radio" name="gender" value="female" />
+                        Female
+                    </label>
+                    <label>
+                        <input type="radio" name="gender" value="neutral" checked />
+                        Neutral
+                    </label>
+                </div>
+            </div>
+            
+            <div class="settings-group">
+                <label for="language">Preferred Language:</label>
+                <select id="language">
+                    <option value="en">English</option>
+                    <option value="hi">Hindi (हिंदी)</option>
+                    <option value="ta">Tamil (தமிழ்)</option>
+                    <option value="te">Telugu (తెలుగు)</option>
+                    <option value="kn">Kannada (ಕನ್ನಡ)</option>
+                    <option value="ml">Malayalam (മലയാളം)</option>
+                    <option value="mr">Marathi (मराठी)</option>
+                    <option value="bn">Bengali (বাংলা)</option>
+                    <option value="gu">Gujarati (ગુજરાતી)</option>
+                    <option value="pa">Punjabi (ਪੰਜਾਬੀ)</option>
+                    <option value="es">Spanish</option>
+                    <option value="fr">French</option>
+                    <option value="de">German</option>
+                    <option value="ja">Japanese</option>
+                    <option value="zh">Chinese</option>
+                </select>
+            </div>
+            
+            <div class="button-group">
+                <button id="saveSettings" class="btn-primary">Save Settings</button>
+                <button id="closeSettings" class="btn-secondary">Cancel</button>
+            </div>
+        </div>
+    </div>
+
     <div class="container">
         <header>
             <h1>🎩 MPA</h1>
             <p class="tagline">Your Personal Digital Butler</p>
+            <button id="settingsBtn" class="settings-btn">⚙️</button>
         </header>
 
         <div class="chat-container" id="chatContainer">
             <div class="welcome-message">
-                <p>Good day! I'm MPA, your personal assistant. How may I be of service?</p>
+                <p>Good day! I'm <span id="assistantName">MPA</span>, your personal assistant. How may I be of service?</p>
             </div>
         </div>
 
