@@ -11,6 +11,12 @@ const userInput = document.getElementById('userInput');
 const sendBtn = document.getElementById('sendBtn');
 const quickBtns = document.querySelectorAll('.quick-btn');
 
+// User management
+let currentUser = localStorage.getItem('mpa_registered_user');
+if (currentUser) {
+    mpa.setRegisteredUser(currentUser);
+}
+
 // Store active reminders
 let activeReminders = [];
 
@@ -68,8 +74,8 @@ function handleUserMessage() {
     // Clear input
     userInput.value = '';
     
-    // Process message with MPA
-    const response = mpa.processMessage(message);
+    // Process message with MPA (pass current user for authentication)
+    const response = mpa.processMessage(message, currentUser);
     
     // Parse action codes
     const actions = mpa.parseActionCodes(response);
@@ -167,5 +173,90 @@ if ('Notification' in window && Notification.permission === 'default') {
     Notification.requestPermission();
 }
 
-// Focus input on load
-userInput.focus();
+/**
+ * Initialize user setup
+ */
+function initializeUserSetup() {
+    // Check if user is already registered
+    if (!currentUser) {
+        showUserSetup();
+    } else {
+        // User already setup, focus input
+        userInput.focus();
+    }
+}
+
+/**
+ * Show user setup dialog
+ */
+function showUserSetup() {
+    const setupOverlay = document.createElement('div');
+    setupOverlay.className = 'setup-overlay';
+    setupOverlay.id = 'setupOverlay';
+    
+    const setupBox = document.createElement('div');
+    setupBox.className = 'setup-box';
+    
+    setupBox.innerHTML = `
+        <h2>Welcome to MPA</h2>
+        <p>Your Personal Digital Butler</p>
+        <p class="setup-description">Please register your name. MPA will respond only to you.</p>
+        <input type="text" id="userNameInput" placeholder="Enter your name" autocomplete="off">
+        <button id="registerUserBtn">Register</button>
+    `;
+    
+    setupOverlay.appendChild(setupBox);
+    document.body.appendChild(setupOverlay);
+    
+    // Handle registration
+    const userNameInput = document.getElementById('userNameInput');
+    const registerBtn = document.getElementById('registerUserBtn');
+    
+    function registerUser() {
+        const userName = userNameInput.value.trim();
+        if (userName) {
+            currentUser = userName;
+            mpa.setRegisteredUser(userName);
+            localStorage.setItem('mpa_registered_user', userName);
+            
+            // Remove setup overlay
+            setupOverlay.remove();
+            
+            // Show welcome message
+            const welcomeMsg = `Welcome, ${userName}! I'm MPA, your personal assistant. How may I be of service?`;
+            const welcomeDiv = document.querySelector('.welcome-message p');
+            if (welcomeDiv) {
+                welcomeDiv.textContent = welcomeMsg;
+            }
+            
+            // Focus input
+            userInput.focus();
+        }
+    }
+    
+    registerBtn.addEventListener('click', registerUser);
+    userNameInput.addEventListener('keypress', (e) => {
+        if (e.key === 'Enter') {
+            registerUser();
+        }
+    });
+    
+    // Focus the input
+    userNameInput.focus();
+}
+
+/**
+ * Allow user to change registered user (for testing/demo purposes)
+ */
+function resetUser() {
+    localStorage.removeItem('mpa_registered_user');
+    currentUser = null;
+    mpa.setRegisteredUser(null);
+    location.reload();
+}
+
+// Make resetUser available globally for testing
+window.resetMPAUser = resetUser;
+
+// Initialize user setup on load
+initializeUserSetup();
