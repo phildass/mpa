@@ -113,7 +113,7 @@ These codes will be hidden from the user but trigger device actions.`;
             return this.getQuote();
         }
 
-        // Check for reminder request (before call check)
+        // Check for reminder request (must come before call check to avoid false matches)
         if (lowerMessage.includes('remind')) {
             return this.handleReminderRequest(userMessage);
         }
@@ -134,8 +134,7 @@ These codes will be hidden from the user but trigger device actions.`;
         }
 
         // Check for play song/music request
-        if (lowerMessage.includes('play song') || lowerMessage.includes('play music') || 
-            (lowerMessage.includes('play') && (lowerMessage.includes('song') || lowerMessage.includes('music')))) {
+        if (lowerMessage.includes('play song') || lowerMessage.includes('play music')) {
             return this.handleSongRequest(userMessage);
         }
 

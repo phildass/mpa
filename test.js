@@ -91,7 +91,7 @@ if (obsceneResponse === "I am sorry. I cannot be of help.") {
 }
 
 // Test 11: User Preferences
-console.log('1️⃣1️⃣ Testing User Preferences:');
+console.log('11. Testing User Preferences:');
 mpa.setUserName('Nina');
 mpa.setGender('female');
 mpa.setLanguage('hi');
