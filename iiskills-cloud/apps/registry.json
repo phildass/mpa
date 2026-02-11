@@ -1,0 +1,46 @@
+{
+  "apps": [
+    {
+      "id": "mpa",
+      "name": "MPA - My Personal Assistant",
+      "description": "A highly efficient, witty, and supportive AI personal assistant with a personality of a high-end digital butler.",
+      "version": "1.0.0",
+      "type": "paid",
+      "pricing": {
+        "base_price": 99,
+        "currency": "INR",
+        "gst_rate": 18,
+        "total_price": 116.82,
+        "display_text": "Rs 99 + GST 18% = Rs 116.82"
+      },
+      "trial": {
+        "enabled": true,
+        "duration_hours": 1,
+        "description": "1 hour free access after download"
+      },
+      "payment": {
+        "gateway_url": "https://aienter.in/payments",
+        "product_code": "MPA_APP_001"
+      },
+      "features": [
+        "User Recognition and Privacy",
+        "Smart Reminder Management",
+        "Daily Jokes and Quotes",
+        "WhatsApp Integration",
+        "Proactive Suggestions",
+        "Browser Notifications"
+      ],
+      "branding": {
+        "logos": ["iiskills", "ai_cloud_enterprises"],
+        "exclude_universal_features": true
+      },
+      "repository": "phildass/mpa",
+      "landing_page": "/iiskills-cloud/landing.html",
+      "download_url": "/iiskills-cloud/download",
+      "status": "active",
+      "deployment_ready": true,
+      "created_at": "2026-02-11T07:12:26.126Z",
+      "updated_at": "2026-02-11T07:12:26.126Z"
+    }
+  ]
+}

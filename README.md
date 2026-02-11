@@ -2,6 +2,14 @@
 
 A highly efficient, witty, and supportive AI personal assistant with a personality of a high-end digital butler.
 
+## 🌟 Now Available on iiskills-cloud!
+
+MPA is now integrated with the iiskills-cloud app marketplace as a paid application. See the [iiskills-cloud integration](iiskills-cloud/README.md) for details.
+
+- **Pricing**: Rs 99 + GST 18% = Rs 116.82
+- **Trial**: 1 hour free access after download
+- **Landing Page**: http://localhost:3000/iiskills-cloud
+
 ## Features
 
 - **User Recognition**: MPA recognizes and responds only to the registered user, ensuring privacy and exclusivity
