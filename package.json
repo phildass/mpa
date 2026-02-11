@@ -1,0 +1,16 @@
+{
+  "name": "mpa",
+  "version": "1.0.0",
+  "description": "My Personal Assistant - An AI-powered personal assistant app",
+  "main": "index.js",
+  "scripts": {
+    "start": "node server.js",
+    "test": "echo \"No tests specified\" && exit 0"
+  },
+  "keywords": ["ai", "assistant", "personal-assistant", "mpa"],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "express": "^4.18.2"
+  }
+}

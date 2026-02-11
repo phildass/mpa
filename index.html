@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MPA - My Personal Assistant</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>🎩 MPA</h1>
+            <p class="tagline">Your Personal Digital Butler</p>
+        </header>
+
+        <div class="chat-container" id="chatContainer">
+            <div class="welcome-message">
+                <p>Good day! I'm MPA, your personal assistant. How may I be of service?</p>
+            </div>
+        </div>
+
+        <div class="input-container">
+            <input 
+                type="text" 
+                id="userInput" 
+                placeholder="Ask me anything... (e.g., 'Remind me to call the dentist tomorrow at 10 AM')"
+                autocomplete="off"
+            >
+            <button id="sendBtn">Send</button>
+        </div>
+
+        <div class="quick-actions">
+            <button class="quick-btn" data-action="joke">Tell me a joke</button>
+            <button class="quick-btn" data-action="quote">Give me a quote</button>
+        </div>
+    </div>
+
+    <script src="mpa.js"></script>
+    <script src="app.js"></script>
+</body>
+</html>
