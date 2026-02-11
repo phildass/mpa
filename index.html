@@ -92,7 +92,16 @@
         </div>
     </div>
 
+    <script src="iiskills-cloud/trial-enforcer.js"></script>
     <script src="mpa.js"></script>
     <script src="app.js"></script>
+    <script>
+        // Initialize trial enforcement when app loads
+        if (typeof trialEnforcer !== 'undefined') {
+            window.addEventListener('load', function() {
+                trialEnforcer.init();
+            });
+        }
+    </script>
 </body>
 </html>

@@ -2,6 +2,14 @@
 
 A highly efficient, witty, and supportive AI personal assistant with a personality of a high-end digital butler.
 
+## 🌟 Now Available on iiskills-cloud!
+
+MPA is now integrated with the iiskills-cloud app marketplace as a paid application. See the [iiskills-cloud integration](iiskills-cloud/README.md) for details.
+
+- **Pricing**: Rs 99 + GST 18% = Rs 116.82
+- **Trial**: 1 hour free access after download
+- **Landing Page**: http://localhost:3000/iiskills-cloud
+
 ## Features
 
 ### Core Capabilities
@@ -9,6 +17,9 @@ A highly efficient, witty, and supportive AI personal assistant with a personali
 - **Name Customization**: Assign any name to your assistant (e.g., Nina, Alex, or keep MPA)
 - **Multi-Language Support**: All Indian languages (Hindi, Tamil, Telugu, Kannada, Malayalam, Marathi, Bengali, Gujarati, Punjabi) plus foreign languages (Spanish, French, German, Japanese, Chinese)
 - **Translation**: Translate text between languages with oral pronunciation support
+
+- **User Recognition**: MPA recognizes and responds only to the registered user, ensuring privacy and exclusivity
+
 - **Reminder Extraction**: Set reminders with natural language (e.g., "Remind me to call the dentist tomorrow at 10 AM")
 - **Daily Content**: Get clever jokes or deeply philosophical quotes
 - **WhatsApp Integration**: Draft messages and generate WhatsApp deep links
@@ -39,6 +50,16 @@ npm start
 ```
 
 Then open your browser to `http://localhost:3000`
+
+### First Time Setup
+
+When you first open the app, you'll be prompted to register your name:
+
+1. Enter your name in the setup dialog
+2. Click "Register"
+3. MPA will now respond only to you
+
+Your registration is saved in browser localStorage, so you won't need to register again on the same device.
 
 ### Example Interactions
 
@@ -79,6 +100,7 @@ MPA uses a system prompt to guide its behavior:
 
 ### Core Capabilities
 
+
 1. **User Preferences**: Customize name, gender, and language preferences
 2. **Reminder Extraction**: Parses user requests for tasks and times, sets browser notifications
 3. **Translation**: Translate text between multiple languages (Indian and foreign languages)
@@ -88,6 +110,13 @@ MPA uses a system prompt to guide its behavior:
 7. **WhatsApp Prep**: Drafts messages and generates WhatsApp deep links
 8. **Obscenity Filter**: Refuses inappropriate content requests
 9. **Proactivity**: Suggests motivational quotes for fitness-related reminders
+
+1. **User Recognition**: Ensures privacy by responding only to the registered user
+2. **Reminder Extraction**: Parses user requests for tasks and times, sets browser notifications
+3. **Daily Content**: Provides jokes or philosophical quotes
+4. **WhatsApp Prep**: Drafts messages and generates WhatsApp deep links
+5. **Proactivity**: Suggests motivational quotes for fitness-related reminders
+
 
 ### Action Codes
 
@@ -144,12 +173,32 @@ You can customize MPA by editing:
 - **Obscenity Filter**: Modify the `obsceneKeywords` array in `mpa.js`
 - **System Prompt**: Edit the `systemPrompt` in `mpa.js`
 
+## User Recognition & Privacy
+
+MPA includes a user recognition feature that ensures your privacy and exclusivity:
+
+- **Registration**: On first launch, you register your name with MPA
+- **Authentication**: MPA stores your username in browser localStorage
+- **Privacy**: If anyone else tries to use MPA, they'll receive the message: "Sorry, I am only available for [Your Name]."
+- **Reset**: To reset the user registration (for testing or changing users), open the browser console and run: `window.resetMPAUser()`
+
+### How It Works
+
+- When you first open MPA, a setup dialog appears
+- You enter your name and click "Register"
+- MPA saves your name and will only respond to you
+- Other users attempting to interact will be politely declined
+
+This feature is ideal for personal use scenarios where you want to ensure your assistant remains private and exclusive to you.
+
 ## Future Enhancements
 
+- Voice input/output with speaker identification
+- Biometric authentication (fingerprint/face unlock)
+- Multi-user profiles support
 - Calendar integration
 - Email drafting
 - Task list management
-- Voice input/output
 - Mobile app version
 - AI model integration (OpenAI, Claude, etc.)
 
